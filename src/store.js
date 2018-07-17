@@ -1,5 +1,7 @@
-import { createStore, compse } from 'redux';
-import { syncHistoryWithStore } from 'react-router-redux';
+import { createStore, applyMiddleware, compose } from 'redux';
+import { connectRouter, routerMiddleware } from 'connected-react-router';
+import thunk from 'redux-thunk';
+import createHistory from 'history/createBrowserHistory';
 
 // import the root reducer
 import rootReducer from './reducers/index';
@@ -7,12 +9,25 @@ import rootReducer from './reducers/index';
 import comments from './data/comments';
 import posts from './data/posts';
 
+export const history = createHistory()
+
 // create an object for the default data
 const defaultState = {
 	posts,
 	comments,
 };
 
-const store = createStore(rootReducer, defaultState);
+const enhancers = []
+const middleware = [thunk, routerMiddleware(history)]
 
-export default store;
+const composedEnhancers = compose(
+  applyMiddleware(...middleware),
+  ...enhancers
+)
+
+export default createStore(
+  connectRouter(history)(rootReducer),
+  defaultState,
+  composedEnhancers
+)
+

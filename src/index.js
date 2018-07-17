@@ -4,12 +4,12 @@ import ReactDOM from 'react-dom';
 import './styles/index.styl';
 
 import App from './route'
-import store from './store';
+import store from './store.js';
 import registerServiceWorker from './registerServiceWorker';
 
 ReactDOM.render(
 	<Provider store={ store }>
-					<App/>
+		<App/>
 	</Provider>,
 	document.getElementById('root')
 );
