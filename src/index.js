@@ -4,13 +4,16 @@ import ReactDOM from 'react-dom';
 import './styles/index.styl';
 
 import App from './route'
-import store from './store.js';
+import { ConnectedRouter } from 'connected-react-router'
+import store, { history } from './store'
 import registerServiceWorker from './registerServiceWorker';
 
 ReactDOM.render(
-	<Provider store={ store }>
-		<App/>
-	</Provider>,
+	<ConnectedRouter history={history}>
+		<div>
+			<App />
+		</div>
+    </ConnectedRouter>,
 	document.getElementById('root')
 );
 registerServiceWorker();
