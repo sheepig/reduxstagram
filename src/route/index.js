@@ -1,7 +1,7 @@
 import React from 'react';
 import {
 	BrowserRouter,
-	Router,
+	Switch,
   Route,
   Link
 } from 'react-router-dom';
@@ -13,10 +13,10 @@ import Single from '../components/Single';
 const App = () => (
 	<div>
 		<Main/>
-		<BrowserRouter>
-			<Route exact path="/" component={ PhotoGrid }/>
-			{/* <Route exact path="/view/:postId" component={ Single }/> */}
-		</BrowserRouter>
+			<Switch>
+				<Route exact path="/" component={ PhotoGrid } />
+				<Route path="/view/:postId" component={ Single }/>
+			</Switch>
 	</div>
 )
 

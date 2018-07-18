@@ -43,6 +43,7 @@
     "dotenv": "4.0.0",
     "dotenv-expand": "4.2.0",
     "fs-extra": "3.0.1",
+    "history": "^4.7.2",
     "promise": "8.0.1",
     "raf": "3.4.0",
     "react": "^16.4.1",
