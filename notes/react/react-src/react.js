@@ -7,7 +7,8 @@
 
 import ReactVersion from 'shared/ReactVersion'; // 当前 react 版本
 
-// 查看 react/reactSymbol.js
+// 查看 react/reactSymbol.js 
+// Symbol 用来标记类 ReactElement 类型，如果支持 Symbol(ES6) 则用 Symbol.for 全局搜索；否则返回一个16进制数字
 // The Symbol used to tag the ReactElement-like types. If there is no native Symbol
 // nor polyfill, then a plain number is used for performance.
 import {
@@ -17,8 +18,10 @@ import {
   REACT_STRICT_MODE_TYPE,
   REACT_PLACEHOLDER_TYPE,
 } from 'shared/ReactSymbols';
-import {enableSuspense} from 'shared/ReactFeatureFlags';
+import {enableSuspense} from 'shared/ReactFeatureFlags'; // false
 
+
+// 
 import {Component, PureComponent} from './ReactBaseClasses';
 import {createRef} from './ReactCreateRef';
 import {forEach, map, count, toArray, only} from './ReactChildren';
