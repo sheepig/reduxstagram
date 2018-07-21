@@ -10,6 +10,7 @@ import ReactVersion from 'shared/ReactVersion'; // 当前 react 版本
 // 查看 react/reactSymbol.js
 // The Symbol used to tag the ReactElement-like types. If there is no native Symbol
 // nor polyfill, then a plain number is used for performance.
+// 
 import {
   REACT_ASYNC_MODE_TYPE,
   REACT_FRAGMENT_TYPE,
