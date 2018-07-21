@@ -46,7 +46,9 @@ if (__DEV__) {
 }
 ```
 
-Component 是个构造函数。原型上挂了 setState，forceUpdate方法。继承于 Component (`class MyComponent extends Component{ ... }`) 的新类，原型对象上将挂上 props, context, refs, updater 等。
+Component 是个构造函数。原型上挂了 setState，forceUpdate等方法。继承于 Component (`class App extends Component{ ... }`) 的新类，实例上将挂上 props, context, refs, updater 等。
+
+![Main](../static/App.png)
 
 ![Main](../static/component.png)
 
