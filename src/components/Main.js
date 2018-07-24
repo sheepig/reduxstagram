@@ -12,6 +12,5 @@ class Main extends Component {
 	}
 }
 
-console.log(new PureComponent());
 
 export default Main;
