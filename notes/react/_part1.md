@@ -257,7 +257,32 @@ function createElement(type, config, children) {
 }
 ```
 
-参数判断: config 拥有 **自有属性** `'ref'`，并且该属性的访问器函数 `get`，`get`没有属性 `isReactWarning`。
+config 参数校验：`hasValidRef` -> `hasValidKey` 
 
+config 处理过后可能的形态：
 
+```
+config
+  |-- 'ref'     // undefined or config.ref
+  |-- 'key'     // undefined or config.key
+  |-- __self    // null or config.__self
+  |-- __source  // null or config.__source
+```
 
+接下来 `for..in` 遍历 config，把所有可枚举属性（除去 RESERVED_PROPS中已有键值）放入 props 对象。
+
+```javascript
+for (propName in config) {
+	if (hasOwnProperty.call(config, propName) && !RESERVED_PROPS.hasOwnProperty(propName)) {
+		props[propName] = config[propName];
+	}
+}
+```
+
+下一步根据 children 的长度，把单个 children 或数组 children 赋给 props.children。
+
+处理缺省 props，在 type.defaultProps 中查询，添加到 props 对象。
+
+warning 处理：props.$$typeof undefined 或不为 REACT_ELEMENT_TYPE（我们认为这样到 props 不是一个 REACT_ELEMENT_TYPE 标识的对象，用在这里不合法）
+
+最后重头戏，调用 ReactElement 构造函数。(to be continue...)
