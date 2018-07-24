@@ -2,10 +2,51 @@
 
 [Symbol](http://es6.ruanyifeng.com/#docs/symbol)
 
+### node_modules 中的 react
 
-`import React, {Component} from 'react'` 时候，发生了什么？
+开发环境中引入的是 react.development.js，整个文件最终 module.exports 一个如下的对象。
 
-import 的 React 对象上挂了一大堆属性和方法，主要关注一下 Component
+```javascript
+var React = {
+  Children: {
+    map: mapChildren,
+    forEach: forEachChildren,
+    count: countChildren,
+    toArray: toArray,
+    only: onlyChild
+  },
+
+  createRef: createRef,
+  Component: Component,
+  PureComponent: PureComponent,
+
+  createContext: createContext,
+  forwardRef: forwardRef,
+
+  Fragment: REACT_FRAGMENT_TYPE,
+  StrictMode: REACT_STRICT_MODE_TYPE,
+  unstable_AsyncMode: REACT_ASYNC_MODE_TYPE,
+  unstable_Profiler: REACT_PROFILER_TYPE,
+
+  createElement: createElementWithValidation,
+  cloneElement: cloneElementWithValidation,
+  createFactory: createFactoryWithValidation,
+  isValidElement: isValidElement,
+
+  version: ReactVersion,
+
+  __SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED: {
+    ReactCurrentOwner: ReactCurrentOwner,
+    // Used by renderers to avoid bundling object-assign twice in UMD bundles:
+    assign: _assign
+  }
+};
+
+module.exports = react;
+```
+
+
+### Component
 
 ```javascript
 function Component(props, context, updater) {
@@ -52,7 +93,7 @@ Component 是个构造函数。原型上挂了 setState，forceUpdate等方法�
 
 ![Main](../static/component.png)
 
-### Component.prototype
+#### Component.prototype
 
  - Component.prototype.setState
  - Component.prototype.forceUpdate
@@ -62,22 +103,7 @@ invariant 对传入的 partialState 进行判断，如果 partialState 不是 Ob
 
 在组件还未 mounted 之前调用这两个方法，则打出 warning
 
-### React.Children
 
-```javascript
-import {forEach, map, count, toArray, only} from './ReactChildren';
-
-const React = {
-  Children: {
-    map,
-    forEach,
-    count,
-    toArray,
-    only,
-  },
-// ...
-}
-```
 
 
 

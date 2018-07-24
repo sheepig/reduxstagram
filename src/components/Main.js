@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, PureComponent } from 'react';
 import { Link, BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import './Main.styl';
 
@@ -11,8 +11,7 @@ class Main extends Component {
 		);
 	}
 }
-let m = new Main();
-console.log(m);
 
+console.log(new PureComponent());
 
 export default Main;
