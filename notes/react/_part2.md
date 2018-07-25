@@ -37,4 +37,32 @@ function hasValidKey(config) {
 
 返回true情况和上一个函数一样，区别只是 `ref` 换成了 `key`
 
+### ReactElement
+
+```javascript
+function ReactElement (type, key, ref, self, source, owner, props) {
+	// ...
+}
+```
+
+返回的 element 对象如下：
+
+```
+element [freeze]
+  |-- $$typeof            // REACT_ELEMENT_TYPE
+
+	|-- type                // --
+	|-- key                 // --
+	|-- ref                 // ---- built from parameters
+	|-- props [freeze]      // --
+	|-- owner               // --
+
+	|-- _store              // initialized {}
+	      |-- validated [*] // initialized false
+				                  // self and source are DEV only properties.
+	|-- _self [*]           // self
+	|-- _source [*]         // source
+```
+
+标记 `[*]` 的属性，`configurable` `enumerable` `writable` 均被设置为 `false`。
 

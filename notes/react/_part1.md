@@ -285,4 +285,39 @@ for (propName in config) {
 
 warning 处理：props.$$typeof undefined 或不为 REACT_ELEMENT_TYPE（我们认为这样到 props 不是一个 REACT_ELEMENT_TYPE 标识的对象，用在这里不合法）
 
-最后重头戏，调用 ReactElement 构造函数。(to be continue...)
+最后重头戏，调用 ReactElement 构造函数。
+
+```javascript
+return ReactElement(type, key, ref, self, source, ReactCurrentOwner.current, props);
+```
+
+传给 ReactElement 的 owner 参数是 ReactCurrentOwner.current，当前 React 所在容器 ？？
+
+JSX其实是 React.createElement 的语法糖，参阅 [React without JSX](https://doc.react-china.org/docs/react-without-jsx.html)
+
+### cloneElement
+
+```javascript
+function cloneElement(element, config, children) {
+	// ...
+}
+```
+
+基于 Element ，克隆并返回一个新的React元素(React Element)。生成元素的 props 是由 element.props + element.type.defaultProps/config 的浅合并。
+
+```javascript
+// Owner will be preserved, unless ref is overridden
+var owner = element._owner;
+
+if (config != null) {
+	if (hasValidRef(config)) {
+		// Silently steal the ref from the parent.
+		ref = config.ref;
+		owner = ReactCurrentOwner.current;
+	}
+	// ...
+}
+```
+
+官网原话：如果你通过 ref 获取到子级组件时，不会一不小心从祖先组件里窃取了它。你将获得与你新元素相同的 ref 。
+
