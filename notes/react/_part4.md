@@ -219,7 +219,17 @@ function ceiling(num, precision) {
 }
 ```
 
-num 上取整，精度为 precision，
+ - computedExpirationBucket
+
+```javascript
+function computeExpirationBucket(currentTime, expirationInMs, bucketSizeMs) {
+  return MAGIC_NUMBER_OFFSET + ceiling(currentTime - MAGIC_NUMBER_OFFSET + expirationInMs / UNIT_SIZE, bucketSizeMs / UNIT_SIZE);
+}
+```
+
+定义过期时间和取整精度（单位Ms），在当前原始 currentTime（减去MAGIC_NUMBER_OFFSET）加上过期时间，并根据精度上取整。最后用 MAGIC_NUMBER_OFFSET 修饰后返回这个新的过期时间。
+
+num 上取整，精度为 precision，比如数字80，上取整精度66，取整结果120（80/66，上取整）。
 
 接下来根据 currentTime current（fiber) 计算一个 expirationTime
 
@@ -252,10 +262,11 @@ if (fiber.mode & AsyncMode) {
 
 全局标记 isBatchingInteractiveUpdates （没想好翻译），当前是否在分发更新？？
 
-如果是，计算 computeInteractiveExpiration(currentTime)
+如果是，计算 computeInteractiveExpiration(currentTime)。在 currentTime 上我们给本次更新 500Ms 的喘息时间，最多 600Ms。
 
-如果否，
+ - 同步模式
 
+expirationTime 设置为 Sync = 1（1单位，即10Ms） 
 
 
 
