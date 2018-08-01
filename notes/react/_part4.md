@@ -199,13 +199,62 @@ var originalStartTimeMs = now(); // 这个基本是常量，脚本第一次加�
 mostRecentCurrentTimeMs; // 当前时间戳减去 originalStartTimeMs 的毫秒数。每次计算 currentTime ，该值会更新，但是这个值不是上面代码的 currentTime
 
 // 得到 currentTime ，还需要把毫秒时间做一个转化，计算规则见函数 msToExpirationTime
+// 可以认为 currentTime = (当前时间戳 - originalStartTimeMs) / UNIT_SIZE | 0
+// 和 0 按位或，目的是下取整，得到整数单位的 expiration time
+// UNIT_SIZE: 一个单位 expiration time 定义为 10ms
+// 最终计算出来的 currentTime 是几个 unit 的 expiration time
+// 这里还有一个小细节，为了避免计算出的 currentTime 和我们定义的全局标记 NoWork 的值冲突，我们给它加上 MAGIC_NUMBER_OFFSET
 
 ```
 
 #### computeExpirationForFiber
 
+先看几个计算过程中用到的方法。
+
+ - ceiling 
+
+```javascript
+function ceiling(num, precision) {
+  return ((num / precision | 0) + 1) * precision;
+}
+```
+
+num 上取整，精度为 precision，
+
+接下来根据 currentTime current（fiber) 计算一个 expirationTime
+
 ![expiration](../static/expiration.png)
 
+我们设定系统的初始更新模式为 NoWork ，全局标记 isWorking 初始化为 false 。
+
+第一次执行 computeExpirationForFiber ，进入的分支是：
+
+```javascript
+// No explicit expiration context was set, and we're not currently
+// performing work. Calculate a new expiration time.
+if (fiber.mode & AsyncMode) {
+  if (isBatchingInteractiveUpdates) {
+    // This is an interactive update
+    expirationTime = computeInteractiveExpiration(currentTime);
+  } else {
+    // This is an async update
+    expirationTime = computeAsyncExpiration(currentTime);
+  }
+} else {
+  // This is a sync update
+  expirationTime = Sync;
+}
+```
+
+全局标记 AsyncMode = 1, 也就是说支持异步模式。此时是否走异步模式，取决于参数 fiber 的模式 fiber.mode 。
+
+- 异步模式
+
+全局标记 isBatchingInteractiveUpdates （没想好翻译），当前是否在分发更新？？
+
+如果是，计算 computeInteractiveExpiration(currentTime)
+
+如果否，
 
 
 
