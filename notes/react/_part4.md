@@ -264,9 +264,43 @@ if (fiber.mode & AsyncMode) {
 
 如果是，计算 computeInteractiveExpiration(currentTime)。在 currentTime 上我们给本次更新 500Ms 的喘息时间，最多 600Ms。
 
+如果否，计算 computeAsyncExpiration(currentTime)。在 currentTime 上我们给本次更新 5000Ms 的喘息时间，最多 5250Ms。
+
  - 同步模式
 
 expirationTime 设置为 Sync = 1（1单位，即10Ms） 
+
+下一步根据 isBatchingInteractiveUpdates 的值，对计算所得的 expirationTime 再看是否需要更新。（待补充）
+
+#### updateContainerAtExpirationTime
+
+```javascript
+function updateContainerAtExpirationTime(element, container, parentComponent, expirationTime, callback) {
+  //...
+}
+```
+
+##### getContextForSubtree
+
+```javascript
+function isContextProvider(fiber) {
+  // 符合该条件的fiber，tag 是一个 ClassComponent
+  return fiber.tag === ClassComponent && fiber.type.childContextTypes != null;
+}
+```
+
+获取子渲染树的 context : 沿着parentComponent的 fiber 链回溯。如果 fiber 的 tag 不是HostRoot ，则从这个 fiber 实例开始，沿着 fiber.return 搜索，直到找到符合 “isContextProvider” 的 fiber ；回溯过程中遇到 fiber 的tag为 HostRoot ，停止搜索。
+
+ 
+
+
+
+
+
+
+
+
+
 
 
 
