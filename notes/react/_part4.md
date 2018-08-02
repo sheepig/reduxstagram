@@ -289,9 +289,104 @@ function isContextProvider(fiber) {
 }
 ```
 
-获取子渲染树的 context : 沿着parentComponent的 fiber 链回溯。如果 fiber 的 tag 不是HostRoot ，则从这个 fiber 实例开始，沿着 fiber.return 搜索，直到找到符合 “isContextProvider” 的 fiber ；回溯过程中遇到 fiber 的tag为 HostRoot ，停止搜索。
+ - 获取子渲染树的 context
 
- 
+沿着parentComponent的 fiber 链回溯。如果 fiber 的 tag 不是HostRoot ，则从这个 fiber 实例开始，沿着 fiber.return 搜索，直到找到符合 “isContextProvider” 的 fiber ；回溯过程中遇到 fiber 的tag为 HostRoot ，停止搜索。
+
+我们在回溯得到的 fiber 上，找到 parentContext(fiber.stateNode.context)。
+
+如果最终的 fiber 符合 “isContextProvider”，子渲染树的 context 由 processChildContext(fiber, parentContext) 计算得来。否则context = parentContext。
+
+ - scheduleRootUpdate
+
+```javascript
+function scheduleRootUpdate(current, element, expirationTime, callback) {
+  var update = createUpdate(expirationTime);
+  // Caution: React DevTools currently depends on this property
+  // being called "element".
+  update.payload = { element: element };
+
+  callback = callback === undefined ? null : callback;
+  if (callback !== null) {
+    !(typeof callback === 'function') ? warning(false, 'render(...): Expected the last optional `callback` argument to be a ' + 'function. Instead received: %s.', callback) : void 0;
+    update.callback = callback;
+  }
+  enqueueUpdate(current, update, expirationTime);
+
+  scheduleWork$1(current, expirationTime);
+  return expirationTime;
+}
+```
+
+
+`function enqueueUpdate(fiber, update, expirationTime) { //... }` 创建一个更新，入队。
+
+队列是临时创建的（created lazily），queue1，queue2 。我们先不着急创建它们。
+
+读取参数 fiber 的fiber.alternate （fiber的备胎？？这里是 container.current），如果为空，我们认为只有一个 fiber 。所以更新队列 queue1 = fiber.updateQueue 。
+
+```javascript
+// Update queues are created lazily.
+  var alternate = fiber.alternate;
+  var queue1 = void 0;
+  var queue2 = void 0;
+  if (alternate === null) {
+    // There's only one fiber.
+    queue1 = fiber.updateQueue;
+    queue2 = null;
+    if (queue1 === null) {
+      queue1 = fiber.updateQueue = createUpdateQueue(fiber.memoizedState);
+    }
+  } else {
+    // ...
+  } 
+```
+
+如果不为空，好吧，那需要两个更新队列。
+
+```javascript
+// There are two owners.
+queue1 = fiber.updateQueue;
+queue2 = alternate.updateQueue;
+```
+
+对这两个更新队列进行处理，如果两个队列中有任何一个为 null ，这个null会被赋值另一个非空的 queue 的拷贝。
+
+```javascript
+if (queue1 === null) {
+  if (queue2 === null) {
+    // Neither fiber has an update queue. Create new ones.
+    queue1 = fiber.updateQueue = createUpdateQueue(fiber.memoizedState);
+    queue2 = alternate.updateQueue = createUpdateQueue(alternate.memoizedState);
+  } else {
+    // Only one fiber has an update queue. Clone to create a new one.
+    queue1 = fiber.updateQueue = cloneUpdateQueue(queue2);
+  }
+} else {
+  if (queue2 === null) {
+    // Only one fiber has an update queue. Clone to create a new one.
+    queue2 = alternate.updateQueue = cloneUpdateQueue(queue1);
+  } else {
+    // Both owners have an update queue.
+  }
+}
+```
+
+最后queue1 queue2 的可能情况有四种：
+
+① queue1 非空，queue2为null；
+
+② queue1，queue2 都非空，且 queue1 ！== queue2
+
+③ queue1，queue2 都非空，且 queue1 === queue2
+
+针对这三种不同情况，更新入队的方式也不同
+
+
+
+
+
+
 
 
 
