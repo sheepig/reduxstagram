@@ -410,9 +410,11 @@ if (queue2 === null || queue1 === queue2) {
 
 任一个队列不空，把更新分别添加到两个 queue 的队尾。否则两个队列都不空，我们只把更新添加到 queue1 ，更新 queue2 的 lastUpdate 指针。
 
+##### appendUpdateToQueue
 
+注意更新队列的 expirationTime ，更新前提是 The incoming update has the earliest expiration of any update in the queue. Update the queue's expiration time.
 
-
+##### scheduleWork$1
 
 
 
