@@ -374,13 +374,42 @@ if (queue1 === null) {
 
 最后queue1 queue2 的可能情况有四种：
 
-① queue1 非空，queue2为null；
+① queue1 非 null ，queue2为null；
 
-② queue1，queue2 都非空，且 queue1 ！== queue2
+② queue1，queue2 都非 null ，且 queue1 ！== queue2
 
-③ queue1，queue2 都非空，且 queue1 === queue2
+③ queue1，queue2 都非 null ，且 queue1 === queue2
 
-针对这三种不同情况，更新入队的方式也不同
+根据 queue 是否空（有没有更新内容: queue.lastUpdate ）有以下更新规则：
+
+```javascript
+if (queue2 === null || queue1 === queue2) {
+  // There's only a single queue.
+  appendUpdateToQueue(queue1, update, expirationTime);
+} else {
+  // There are two queues. We need to append the update to both queues,
+  // while accounting for the persistent structure of the list — we don't
+  // want the same update to be added multiple times.
+  if (queue1.lastUpdate === null || queue2.lastUpdate === null) {
+    // One of the queues is not empty. We must add the update to both queues.
+    appendUpdateToQueue(queue1, update, expirationTime);
+    appendUpdateToQueue(queue2, update, expirationTime);
+  } else {
+    // Both queues are non-empty. The last update is the same in both lists,
+    // because of structural sharing. So, only append to one of the lists.
+    appendUpdateToQueue(queue1, update, expirationTime);
+    // But we still need to update the `lastUpdate` pointer of queue2.
+    queue2.lastUpdate = update;
+  }
+}
+```
+
+如果只有一个 queue，把更新加入 queue1 的队尾。
+
+如果有两个 queue ，我们要做的是，在两个队中都要添加更新，但是我们不希望同样的更新被多次添加。
+
+任一个队列不空，把更新分别添加到两个 queue 的队尾。否则两个队列都不空，我们只把更新添加到 queue1 ，更新 queue2 的 lastUpdate 指针。
+
 
 
 
