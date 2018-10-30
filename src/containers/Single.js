@@ -3,11 +3,9 @@ import React, { Component } from 'react';
 class Single extends Component {
 	render() {
 		return (
-			<div className="single-photo">
-				I'm the single
-			</div>
-		);
+			<div>Single</div>
+		)
 	}
 }
 
-export default Single;
+export default Single
